@@ -13,7 +13,7 @@ const SinglePatientPage = () => {
     const fetchPatient = async () => {
       try {
         const response = await patientService.getPatientById(id!);
-        setPatient(response.data);
+        setPatient(response.data.data);
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -33,6 +33,17 @@ const SinglePatientPage = () => {
       <p>gender: {patient?.gender}</p>
       <p>occupation: {patient?.occupation}</p>
       <p>ssn: {patient?.ssn}</p>
+      <h3>entries</h3>
+      {patient?.entries.map((entry) => (
+        <div key={entry.id}>
+          <p>{entry.description}</p>
+          <ul>
+            {entry.diagnosisCodes?.map((code) => (
+              <li key={code}>{code}</li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </>
   );
 };

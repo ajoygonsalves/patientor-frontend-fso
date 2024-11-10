@@ -20,7 +20,9 @@ const create = async (object: PatientFormValues) => {
 };
 
 const getPatientById = async (id: string) => {
-  const patient = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
+  const patient = await axios.get<Response<Patient>>(
+    `${apiBaseUrl}/patients/${id}`
+  );
   if (!patient) throw new Error("Patient not found, check ID");
   return patient;
 };
