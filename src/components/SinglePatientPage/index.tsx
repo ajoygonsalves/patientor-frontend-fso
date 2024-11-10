@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 import patientService from "../../services/patients";
 import diagnosisService from "../../services/diagnosis";
 import { Diagnosis, Patient } from "../../types";
+import EntryDetails from "./EntryDetails";
 
 const SinglePatientPage = () => {
   const { id } = useParams();
   const [patient, setPatient] = useState<Patient | null>(null);
-  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+  const [diagnosis, setDiagnosis] = useState<Diagnosis[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,12 +28,12 @@ const SinglePatientPage = () => {
   }, [id]);
 
   useEffect(() => {
-    const fetchDiagnoses = async () => {
+    const fetchDiagnosis = async () => {
       const response = await diagnosisService.getAll();
-      setDiagnoses(response);
+      setDiagnosis(response);
     };
 
-    fetchDiagnoses();
+    fetchDiagnosis();
   }, [patient]);
 
   if (loading) return <p>Loading...</p>;
@@ -45,19 +46,20 @@ const SinglePatientPage = () => {
       <p>occupation: {patient?.occupation}</p>
       <p>ssn: {patient?.ssn}</p>
       <h3>entries</h3>
-      {patient?.entries.map((entry) => (
-        <div key={entry.id}>
-          <p>{entry.description}</p>
-          <ul>
-            {entry.diagnosisCodes?.map((code) => (
-              <li key={code}>
-                {code}{" "}
-                {Object.values(diagnoses).find((d) => d.code === code)?.name}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      {patient?.entries &&
+        patient.entries.map((entry) => (
+          <div
+            key={entry.id}
+            style={{
+              marginBottom: "1em",
+              padding: "1em",
+              border: "1px solid black",
+              borderRadius: "5px",
+            }}
+          >
+            <EntryDetails entry={entry} diagnosis={diagnosis} />
+          </div>
+        ))}
     </>
   );
 };
